@@ -1,118 +1,68 @@
-from fastapi import FastAPI, Depends, HTTPException
-from sqlalchemy.orm import Session
-from app.database import SessionLocal, engine, Base
-from app import models, schemas
+from fastapi import FastAPI
+from fastapi.responses import HTMLResponse
+from datetime import datetime
 
-# Inizializza le tabelle se non esistono
-Base.metadata.create_all(bind=engine)
+app = FastAPI(docs_url=None)  # Disattiva la UI automatica su /docs
 
-# Istanza FastAPI
-app = FastAPI(title="Backend CRUD Demo", version="1.0.0")
+@app.get("/", response_class=HTMLResponse)
+def read_root():
+    now = datetime.now().strftime("%d %B %Y, %H:%M")
+    return f"""
+    <html>
+        <head>
+            <title>🚀 FastAPI Backend Dashboard</title>
+        </head>
+        <body style="font-family: sans-serif; background-color: #f9f9f9; padding: 2rem;">
+            <h1>🚀 FastAPI Backend Dashboard</h1>
+            <p><strong>Stato:</strong> <span style="color: green;">LIVE (locale)</span></p>
+            <ul>
+                <li><a href="/"><code>/</code></a> → Homepage HTML</li>
+                <li><a href="/docs"><code>/docs</code></a> → Swagger UI</li>
+                <li><a href="/health"><code>/health</code></a> → Stato del servizio</li>
+            </ul>
+            <p style="margin-top: 2rem; font-size: 0.9em; color: #666;">
+                Ultimo aggiornamento: {now}<br>
+                Powered by Marcello & Copilot ⚡️
+            </p>
+        </body>
+    </html>
+    """
 
-# Dependency per gestire la sessione DB
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+@app.get("/health", response_class=HTMLResponse)
+def health_check():
+    now = datetime.now().strftime("%d %B %Y, %H:%M:%S")
+    return f"""
+    <html>
+        <head>
+            <title>🩺 Stato del Servizio</title>
+        </head>
+        <body style="font-family: sans-serif; background-color: #f0fff0; padding: 2rem;">
+            <h1>🩺 Stato del Servizio</h1>
+            <p><strong>Status:</strong> <span style="color: green;">OK</span></p>
+            <p><strong>Servizio:</strong> FastAPI backend</p>
+            <p><strong>Timestamp:</strong> {now}</p>
+            <p style="margin-top: 2rem;"><a href="/">← Torna alla dashboard</a></p>
+        </body>
+    </html>
+    """
 
-# -------------------------------
-# Endpoint CRUD per Users
-# -------------------------------
+@app.get("/docs", response_class=HTMLResponse)
+def custom_docs():
+    return """
+    <html>
+        <head>
+            <title>📚 Documentazione API</title>
+        </head>
+        <body style="font-family: sans-serif; background-color: #fff; padding: 2rem;">
+            <h1>📚 Documentazione API</h1>
+            <p><a href="/" style="font-weight: bold;">← Torna alla dashboard</a></p>
+            <iframe src="/swagger" width="100%" height="800px" style="border: 1px solid #ccc;"></iframe>
+        </body>
+    </html>
+    """
 
-@app.post("/users/", response_model=schemas.UserRead)
-def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    db_user = models.User(email=user.email, name=user.name, status=user.status)
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    return db_user
+from fastapi.openapi.docs import get_swagger_ui_html
 
-@app.get("/users/{user_id}", response_model=schemas.UserRead)
-def read_user(user_id: int, db: Session = Depends(get_db)):
-    user = db.query(models.User).filter(models.User.id == user_id).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    return user
-
-@app.get("/users/", response_model=list[schemas.UserRead])
-def list_users(db: Session = Depends(get_db)):
-    return db.query(models.User).all()
-
-# -------------------------------
-# Endpoint CRUD per Transactions
-# -------------------------------
-
-@app.post("/transactions/", response_model=schemas.TransactionRead)
-def create_transaction(tx: schemas.TransactionCreate, db: Session = Depends(get_db)):
-    # Verifica che l'utente esista
-    user = db.query(models.User).filter(models.User.id == tx.user_id).first()
-    if not user:
-        raise HTTPException(status_code=400, detail="User not found")
-    db_tx = models.Transaction(**tx.dict())
-    db.add(db_tx)
-    db.commit()
-    db.refresh(db_tx)
-    return db_tx
-
-@app.get("/transactions/{tx_id}", response_model=schemas.TransactionRead)
-def read_transaction(tx_id: int, db: Session = Depends(get_db)):
-    tx = db.query(models.Transaction).filter(models.Transaction.id == tx_id).first()
-    if not tx:
-        raise HTTPException(status_code=404, detail="Transaction not found")
-    return tx
-
-@app.get("/transactions/", response_model=list[schemas.TransactionRead])
-def list_transactions(db: Session = Depends(get_db)):
-    return db.query(models.Transaction).all()
-
-# -------------------------------
-# Healthcheck
-# -------------------------------
-
-@app.get("/")
-def root():
-    return {"status": "ok", "message": "Backend FastAPI attivo"}
-
-@app.put("/users/{user_id}", response_model=schemas.UserRead)
-def update_user(user_id: int, user: schemas.UserCreate, db: Session = Depends(get_db)):
-    db_user = db.query(models.User).filter(models.User.id == user_id).first()
-    if not db_user:
-        raise HTTPException(status_code=404, detail="User not found")
-    db_user.email = user.email
-    db_user.name = user.name
-    db_user.status = user.status
-    db.commit()
-    db.refresh(db_user)
-    return db_user
-
-@app.delete("/users/{user_id}")
-def delete_user(user_id: int, db: Session = Depends(get_db)):
-    db_user = db.query(models.User).filter(models.User.id == user_id).first()
-    if not db_user:
-        raise HTTPException(status_code=404, detail="User not found")
-    db.delete(db_user)
-    db.commit()
-    return {"detail": f"User {user_id} deleted"}
-
-@app.put("/transactions/{tx_id}", response_model=schemas.TransactionRead)
-def update_transaction(tx_id: int, tx: schemas.TransactionCreate, db: Session = Depends(get_db)):
-    db_tx = db.query(models.Transaction).filter(models.Transaction.id == tx_id).first()
-    if not db_tx:
-        raise HTTPException(status_code=404, detail="Transaction not found")
-    for field, value in tx.dict().items():
-        setattr(db_tx, field, value)
-    db.commit()
-    db.refresh(db_tx)
-    return db_tx
-
-@app.delete("/transactions/{tx_id}")
-def delete_transaction(tx_id: int, db: Session = Depends(get_db)):
-    db_tx = db.query(models.Transaction).filter(models.Transaction.id == tx_id).first()
-    if not db_tx:
-        raise HTTPException(status_code=404, detail="Transaction not found")
-    db.delete(db_tx)
-    db.commit()
-    return {"detail": f"Transaction {tx_id} deleted"}
-
+@app.get("/swagger", include_in_schema=False)
+def overridden_swagger():
+    return get_swagger_ui_html(openapi_url="/openapi.json", title="Swagger UI")
