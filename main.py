@@ -2,6 +2,13 @@ from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from datetime import datetime
 
+# Import DB e modelli
+from backend.db.engine import Base, engine
+import backend.models  # importa i tuoi modelli
+
+# Inizializza il DB (crea le tabelle se non esistono)
+Base.metadata.create_all(bind=engine)
+
 app = FastAPI(docs_url=None)  # Disattiva la UI automatica su /docs
 
 @app.get("/", response_class=HTMLResponse)

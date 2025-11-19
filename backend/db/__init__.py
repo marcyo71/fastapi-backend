@@ -1,5 +1,5 @@
 from sqlalchemy.orm import declarative_base
-from app.backend.db.engine import Base, SessionLocal, engine
+from backend.db.engine import Base, SessionLocal, engine
 
 Base = declarative_base()
 

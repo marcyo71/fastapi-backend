@@ -1,7 +1,7 @@
 import enum
 from sqlalchemy import Column, Integer, String, Enum
 from sqlalchemy.orm import relationship
-from app.backend.db.engine import Base
+from backend.db.engine import Base
 
 class UserStatus(enum.Enum):
     abbonato = "abbonato"

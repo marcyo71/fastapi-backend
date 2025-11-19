@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Request, HTTPException
 import stripe
-from app.stripe_config import STRIPE_WEBHOOK_SECRET
-from app.backend.db import SessionLocal
-from app.backend.models.transaction import Transaction
+from backend.stripe_config import STRIPE_WEBHOOK_SECRET
+from backend.db import SessionLocal
+from backend.models.transaction import Transaction
 
 router = APIRouter()
 stripe.api_key = stripe.api_key  # già impostata nel router, se serve puoi importarla

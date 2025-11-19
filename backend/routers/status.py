@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.backend.services.status_service import get_status
+from backend.services.status_service import get_status
 
 router = APIRouter()
 

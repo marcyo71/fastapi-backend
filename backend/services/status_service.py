@@ -1,7 +1,7 @@
 from datetime import datetime
-from app.backend.config import settings
-from app.backend.models.status_model import StatusResponse
-from app.backend.db import Base
+from backend.config import settings
+from backend.models.status_model import StatusResponse
+from backend.db import Base
 
 # Tempo di avvio del backend
 start_time = datetime.utcnow()

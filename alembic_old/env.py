@@ -1,31 +1,30 @@
 import sys
 import os
-
-# 🔧 Fix per permettere ad Alembic di vedere la root del progetto
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
 from logging.config import fileConfig
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
 
+from sqlalchemy import engine_from_config, pool
 from alembic import context
 
-# Import del Base e dei modelli
+# Fix: aggiunge la cartella "Documents" al PYTHONPATH
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
+
+# Importa Base e i modelli
 from backend.db.engine import Base
 import backend.models
 
-# Config object di Alembic
+# Config Alembic
 config = context.config
 
-# Interpret the config file for Python logging.
-fileConfig(config.config_file_name)
+# Logging
+if config.config_file_name is not None:
+    fileConfig(config.config_file_name)
 
 # Target metadata per autogenerate
 target_metadata = Base.metadata
 
 
 def run_migrations_offline():
-    """Run migrations in 'offline' mode."""
+    """Esegui migrazioni in modalità offline."""
     url = config.get_main_option("sqlalchemy.url")
     context.configure(
         url=url,
@@ -33,25 +32,22 @@ def run_migrations_offline():
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
     )
-
     with context.begin_transaction():
         context.run_migrations()
 
 
 def run_migrations_online():
-    """Run migrations in 'online' mode."""
+    """Esegui migrazioni in modalità online."""
     connectable = engine_from_config(
         config.get_section(config.config_ini_section),
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )
-
     with connectable.connect() as connection:
         context.configure(
             connection=connection,
-            target_metadata=target_metadata
+            target_metadata=target_metadata,
         )
-
         with context.begin_transaction():
             context.run_migrations()
 

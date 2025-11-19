@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from app.backend.db.engine import SessionLocal
-from app.backend.models import Transaction
+from backend.db.engine import SessionLocal
+from backend.models import Transaction
 
 # Istanza del router
 transactions_router = APIRouter(prefix="/transactions", tags=["transactions"])

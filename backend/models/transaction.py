@@ -1,6 +1,6 @@
 from sqlalchemy import Column, String, Integer, DateTime, Float
 from sqlalchemy.sql import func
-from app.backend.db.engine import Base  # ✅ Assicurati che punti al Base giusto
+from backend.db.engine import Base  # ✅ Assicurati che punti al Base giusto
 
 class Transaction(Base):
     __tablename__ = "transactions"

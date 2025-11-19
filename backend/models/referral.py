@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
-from app.backend.db.engine import Base
+from backend.db.engine import Base
 from datetime import datetime
 
 class Referral(Base):
