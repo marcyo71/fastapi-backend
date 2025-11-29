@@ -1,26 +1,57 @@
-from pydantic import BaseModel
-from typing import Optional
+from pydantic import BaseModel, EmailStr, Field
+from typing import Optional, List
+from datetime import datetime
 
+# ---- UserStatus ----
+class UserStatusCreate(BaseModel):
+    status: str = Field(..., min_length=2, max_length=32)
+
+class UserStatusRead(BaseModel):
+    id: int
+    status: str
+
+    class Config:
+        from_attributes = True
+
+# ---- User ----
 class UserCreate(BaseModel):
-    email: str
+    name: str = Field(..., min_length=1, max_length=64)
+    email: EmailStr
+    status_id: int
+
+class UserRead(BaseModel):
+    id: int
     name: str
-    status: str
+    email: EmailStr
+    status_id: int
 
-class UserRead(UserCreate):
-    id: int
     class Config:
-        orm_mode = True
+        from_attributes = True
 
+# ---- Transaction ----
 class TransactionCreate(BaseModel):
-    session_id: str
-    customer_email: str
-    amount_total: int
-    status: str
-    amount: float
-    currency: str
     user_id: int
+    amount: float = Field(..., ge=0.0)
 
-class TransactionRead(TransactionCreate):
+class TransactionRead(BaseModel):
     id: int
+    user_id: int
+    amount: float
+    created_at: datetime
+
     class Config:
-        orm_mode = True
+        from_attributes = True
+
+# ---- Referral ----
+class ReferralCreate(BaseModel):
+    referrer_id: int
+    referred_id: int
+
+class ReferralRead(BaseModel):
+    id: int
+    referrer_id: int
+    referred_id: int
+    created_at: datetime
+
+    class Config:
+        from_attributes = True

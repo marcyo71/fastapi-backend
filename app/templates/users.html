@@ -1,0 +1,33 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Gestione Utenti{% endblock %}
+
+{% block content %}
+<h1><i class="fas fa-users utenti-icon"></i> Gestione Utenti</h1>
+<p>Elenco degli utenti registrati nel sistema:</p>
+
+<table style="width:100%; border-collapse:collapse; margin-top:20px;">
+    <thead>
+        <tr style="background:#f2f2f2;">
+            <th style="border:1px solid #ccc; padding:8px;">ID</th>
+            <th style="border:1px solid #ccc; padding:8px;">Nome</th>
+            <th style="border:1px solid #ccc; padding:8px;">Email</th>
+            <th style="border:1px solid #ccc; padding:8px;">Ruolo</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="border:1px solid #ccc; padding:8px;">1</td>
+            <td style="border:1px solid #ccc; padding:8px;">Mario Rossi</td>
+            <td style="border:1px solid #ccc; padding:8px;">mario.rossi@example.com</td>
+            <td style="border:1px solid #ccc; padding:8px;">Utente</td>
+        </tr>
+        <tr>
+            <td style="border:1px solid #ccc; padding:8px;">2</td>
+            <td style="border:1px solid #ccc; padding:8px;">Lucia Bianchi</td>
+            <td style="border:1px solid #ccc; padding:8px;">lucia.bianchi@example.com</td>
+            <td style="border:1px solid #ccc; padding:8px;">Admin</td>
+        </tr>
+    </tbody>
+</table>
+{% endblock %}

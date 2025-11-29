@@ -1,28 +1,37 @@
-from sqlalchemy import Column, Integer, Float, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, Float, DateTime
 from sqlalchemy.orm import relationship
-from datetime import datetime
-from backend.db.engine import Base
+from database import Base
 
 class User(Base):
     __tablename__ = "users"
-
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, nullable=False)
+    email = Column(String, unique=True, index=True, nullable=False)
+    status_id = Column(Integer, ForeignKey("user_status.id"))
 
-    # Relazione con Transaction
+    status = relationship("UserStatus", back_populates="users")
     transactions = relationship("Transaction", back_populates="user")
+    referrals = relationship("Referral", back_populates="user")
 
+class UserStatus(Base):
+    __tablename__ = "user_status"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, unique=True)
+
+    users = relationship("User", back_populates="status")
 
 class Transaction(Base):
     __tablename__ = "transactions"
-
     id = Column(Integer, primary_key=True, index=True)
-    amount = Column(Float, nullable=False)
-    description = Column(String, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
-
-    # ForeignKey verso User
     user_id = Column(Integer, ForeignKey("users.id"))
+    amount = Column(Float, nullable=False)
+    timestamp = Column(DateTime)
 
-    # Relazione inversa
     user = relationship("User", back_populates="transactions")
+
+class Referral(Base):
+    __tablename__ = "referrals"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    code = Column(String, unique=True)
+
+    user = relationship("User", back_populates="referrals")

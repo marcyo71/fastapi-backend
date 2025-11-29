@@ -1,23 +1,35 @@
-from backend.db.database import SessionLocal
-from backend.models.user import User
-from backend.models.user import User
+# seed.py
+from database import Base, engine, SessionLocal
+import models
 
-def seed_users():
-    db = SessionLocal()
+# Ricrea lo schema (se app.db è stato eliminato)
+Base.metadata.create_all(bind=engine)
 
-    # Pulisce eventuali dati vecchi
-    db.query(User).delete()
+# Sessione DB
+db = SessionLocal()
 
-    # Utente base con ref_code
-    alice = User(name="Alice", email="alice@test.com", balance=50.0, ref_code="ALICE123")
-    bob = User(name="Bob", email="bob@test.com", balance=20.0, ref_code="BOB123", ref_by="ALICE123")
-    carol = User(name="Carol", email="carol@test.com", balance=30.0, ref_code="CAROL123", ref_by="ALICE123")
-    dave = User(name="Dave", email="dave@test.com", balance=10.0, ref_code="DAVE123", ref_by="BOB123")
+# --- Inserisci UserStatus ---
+status_active = models.UserStatus(status="active")
+status_inactive = models.UserStatus(status="inactive")
+db.add_all([status_active, status_inactive])
+db.commit()
 
-    db.add_all([alice, bob, carol, dave])
-    db.commit()
-    db.close()
-    print("Seed completato: utenti inseriti.")
+# --- Inserisci Users ---
+user1 = models.User(name="Mario Rossi", email="mario@example.com", status_id=status_active.id)
+user2 = models.User(name="Luca Bianchi", email="luca@example.com", status_id=status_inactive.id)
+db.add_all([user1, user2])
+db.commit()
 
-if __name__ == "__main__":
-    seed_users()
+# --- Inserisci Transaction ---
+transaction1 = models.Transaction(user_id=user1.id, amount=99.90)
+db.add(transaction1)
+db.commit()
+
+# --- Inserisci Referral ---
+referral1 = models.Referral(referrer_id=user1.id, referred_id=user2.id)
+db.add(referral1)
+db.commit()
+
+db.close()
+
+print("Seed completato: status, utenti, transazioni e referral inseriti!")

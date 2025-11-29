@@ -1,0 +1,29 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Area Amministratore{% endblock %}
+
+{% block content %}
+<h1><i class="fas fa-user-shield"></i> Area Amministratore</h1>
+<p>Benvenuto Marcello, da qui puoi monitorare e gestire il sistema:</p>
+
+<div style="margin-top:20px;">
+    <ul style="list-style:none; padding:0;">
+        <li style="margin-bottom:10px;">
+            <i class="fas fa-users utenti-icon"></i>
+            <a href="/utenti">Gestione Utenti</a>
+        </li>
+        <li style="margin-bottom:10px;">
+            <i class="fas fa-exchange-alt transazioni-icon"></i>
+            <a href="/transazioni">Storico Transazioni</a>
+        </li>
+        <li style="margin-bottom:10px;">
+            <i class="fas fa-chart-line dashboard-icon"></i>
+            <a href="/dashboard">Dashboard</a>
+        </li>
+        <li style="margin-bottom:10px;">
+            <i class="fas fa-heartbeat stato-icon"></i>
+            <a href="/stato">Stato del Sistema</a>
+        </li>
+    </ul>
+</div>
+{% endblock %}

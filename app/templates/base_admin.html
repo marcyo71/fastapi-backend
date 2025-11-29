@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}FastAPI - Admin{% endblock %}</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <nav>
+    <a href="/"><i class="fas fa-home home-icon"></i> Home</a>
+    <a href="/stato"><i class="fas fa-heartbeat stato-icon"></i> Stato</a>
+    <a href="/utenti"><i class="fas fa-users utenti-icon"></i> Utenti</a>
+    <a href="/transazioni"><i class="fas fa-exchange-alt transazioni-icon"></i> Transazioni</a>
+    <a href="/dashboard"><i class="fas fa-chart-line dashboard-icon"></i> Dashboard</a>
+</nav>
+
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>
