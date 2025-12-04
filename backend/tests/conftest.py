@@ -1,7 +1,7 @@
 import pytest
 import uuid
-from fastapi.testclient import TestClient
-from fastapi import FastAPI
+from app.testclient import TestClient
+from app import app
 from backend.db.init import init_db
 from backend.db import Base, engine, get_db
 from backend.routers import user_router, survey_router
@@ -21,7 +21,7 @@ def client():
         finally:
             db.close()
 
-    app = FastAPI()
+    app = app()
     app.include_router(user_router.router)
     app.include_router(survey_router.router)
     app.dependency_overrides[get_db] = override_get_db

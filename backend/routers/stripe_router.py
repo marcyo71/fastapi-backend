@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from app import APIRouter, Depends
 from pydantic import BaseModel
 from backend.dependencies import get_api_key
 

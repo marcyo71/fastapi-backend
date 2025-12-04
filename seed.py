@@ -1,35 +1,29 @@
-# seed.py
-from database import Base, engine, SessionLocal
-import models
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from backend.utils import get_password_hash
+from app.models import User, Base  # ⚠️ Adatta l'import se User/Base sono altrove
 
-# Ricrea lo schema (se app.db è stato eliminato)
-Base.metadata.create_all(bind=engine)
+DATABASE_URL = "postgresql://marcy:tuapassword@localhost:5432/fastapi_db"
 
-# Sessione DB
-db = SessionLocal()
+engine = create_engine(DATABASE_URL)
+SessionLocal = sessionmaker(bind=engine)
 
-# --- Inserisci UserStatus ---
-status_active = models.UserStatus(status="active")
-status_inactive = models.UserStatus(status="inactive")
-db.add_all([status_active, status_inactive])
-db.commit()
+def seed_user():
+    db = SessionLocal()
+    try:
+        plain_password = "m@rcy2025"
+        hashed_password = get_password_hash(plain_password)
 
-# --- Inserisci Users ---
-user1 = models.User(name="Mario Rossi", email="mario@example.com", status_id=status_active.id)
-user2 = models.User(name="Luca Bianchi", email="luca@example.com", status_id=status_inactive.id)
-db.add_all([user1, user2])
-db.commit()
+        user = User(
+            email="marcy@example.com",
+            password=hashed_password   # <-- usa 'password'
+        )
 
-# --- Inserisci Transaction ---
-transaction1 = models.Transaction(user_id=user1.id, amount=99.90)
-db.add(transaction1)
-db.commit()
+        db.add(user)
+        db.commit()
+        print(f"Utente creato: marcy@example.com con password '{plain_password}'")
+    finally:
+        db.close()
 
-# --- Inserisci Referral ---
-referral1 = models.Referral(referrer_id=user1.id, referred_id=user2.id)
-db.add(referral1)
-db.commit()
-
-db.close()
-
-print("Seed completato: status, utenti, transazioni e referral inseriti!")
+if __name__ == "__main__":
+    seed_user()

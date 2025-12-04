@@ -1,5 +1,5 @@
 # backend/routers/subscription_router.py
-from fastapi import APIRouter, Request, HTTPException
+from app import APIRouter, Request, HTTPException
 import stripe
 from backend.config.settings import settings
 

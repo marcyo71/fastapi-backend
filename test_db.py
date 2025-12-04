@@ -1,13 +1,13 @@
 import sys, os
-# Aggiungo la cartella fastapi al path
-sys.path.append(os.path.join(os.path.dirname(__file__), "fastapi"))
+# Aggiungo la cartella app al path
+sys.path.append(os.path.join(os.path.dirname(__file__), "app"))
 
 from models import Base, User, Transaction, Referral
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 # Connessione al tuo DB Postgres (aggiorna password/host se diverso)
-DATABASE_URL = "postgresql://marcy:nuovapassword@localhost:5432/fastapi_db"
+DATABASE_URL = "postgresql://marcy:nuovapassword@localhost:5432/app_db"
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(bind=engine)
 

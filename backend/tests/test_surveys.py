@@ -1,6 +1,6 @@
 
-from fastapi import FastAPI, Depends
-from fastapi.testclient import TestClient
+from app import app, Depends
+from app.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 from backend.db import Base, get_db
@@ -26,8 +26,8 @@ def override_get_db():
     finally:
         db.close()
 
-# 🧪 App FastAPI isolata
-app = FastAPI()
+# 🧪 App app isolata
+app = app()
 app.include_router(user_router.router)
 app.include_router(survey_router.router)
 app.dependency_overrides[get_db] = override_get_db

@@ -1,5 +1,5 @@
-from fastapi import Security, HTTPException
-from fastapi.security.api_key import APIKeyHeader
+from app import Security, HTTPException
+from app.security.api_key import APIKeyHeader
 
 API_KEY = "supersegreta123"
 api_key_header = APIKeyHeader(name="X-API-Key")

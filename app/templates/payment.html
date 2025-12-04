@@ -1,6 +1,10 @@
-{% extends "base.html" %}
+{% extends "base_user.html" %}
+
 {% block title %}Pagamenti{% endblock %}
+
 {% block content %}
-<h1><i class="fas fa-credit-card"></i> Sezione Pagamenti</h1>
-<p>Qui puoi gestire i tuoi pagamenti.</p>
+<h2><i class="fas fa-credit-card"></i> Area Pagamenti</h2>
+<form action="/payments/create-checkout-session" method="POST">
+  <button type="submit">Procedi al pagamento</button>
+</form>
 {% endblock %}

@@ -1,7 +1,9 @@
-from backend.db.engine import SessionLocal
-from sqlalchemy.orm import Session
+# backend/db/dependencies.py
 from fastapi import Depends
+from sqlalchemy.orm import Session
+from backend.database import SessionLocal
 
+# Dependency per DB
 def get_db() -> Session:
     db = SessionLocal()
     try:

@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from app import APIRouter
 
 router = APIRouter(prefix="/ping", tags=["ping"])
 

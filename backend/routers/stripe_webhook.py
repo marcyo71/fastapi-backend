@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, HTTPException
+from app import APIRouter, Request, HTTPException
 import stripe
 from backend.stripe_config import STRIPE_WEBHOOK_SECRET
 from backend.db import SessionLocal

@@ -2,24 +2,30 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}FastAPI - Admin{% endblock %}</title>
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <!-- CSS -->
+    <title>Area Amministratore</title>
     <link rel="stylesheet" href="/static/style.css">
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
 </head>
 <body>
     <nav>
-    <a href="/"><i class="fas fa-home home-icon"></i> Home</a>
-    <a href="/stato"><i class="fas fa-heartbeat stato-icon"></i> Stato</a>
-    <a href="/utenti"><i class="fas fa-users utenti-icon"></i> Utenti</a>
-    <a href="/transazioni"><i class="fas fa-exchange-alt transazioni-icon"></i> Transazioni</a>
-    <a href="/dashboard"><i class="fas fa-chart-line dashboard-icon"></i> Dashboard</a>
-</nav>
-
+        <!-- Link a sinistra -->
+        <ul class="nav-left">
+            <li><a href="/admin" class="nav-btn">Home</a></li>
+            <li><a href="/users" class="nav-btn">Utenti</a></li>
+            <li><a href="/transazioni" class="nav-btn">Transazioni</a></li>
+            <li><a href="/dashboard" class="nav-btn">Dashboard</a></li>
+            <li><a href="/stato" class="nav-btn">Stato</a></li>
+        </ul>
+        <!-- Logout a destra -->
+        <form action="/logout" method="get">
+            <button type="submit" class="logout-btn">Logout</button>
+        </form>
+    </nav>
 
     <main>
-        {% block content %}{% endblock %}
+        {% block content %}
+        {% endblock %}
     </main>
 </body>
 </html>

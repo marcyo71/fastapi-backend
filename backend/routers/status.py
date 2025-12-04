@@ -1,8 +1,9 @@
-from fastapi import APIRouter
-from backend.services.status_service import get_status
+from fastapi import APIRouter, Request
+from fastapi.templating import Jinja2Templates
 
-router = APIRouter()
+router = APIRouter(prefix="/status", tags=["status"])
+templates = Jinja2Templates(directory="app/templates")
 
-@router.get("/status")
-def status():
-    return get_status()
+@router.get("/")
+async def status_page(request: Request):
+    return templates.TemplateResponse("status.html", {"request": request})

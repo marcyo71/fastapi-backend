@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String, Float, ForeignKey
 from sqlalchemy.orm import declarative_base, relationship
+from backend.database import Base
 
 Base = declarative_base()
 
@@ -9,6 +10,9 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(50), nullable=False)
     email = Column(String(100), unique=True, index=True, nullable=False)
+    hashed_password = Column(String(200), nullable=False)
+
+
 
     # Relazioni
     transactions = relationship("Transaction", back_populates="user")

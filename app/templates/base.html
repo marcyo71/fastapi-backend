@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard FastAPI</title>
+</head>
+<body>
+    <h1>Dashboard FastAPI</h1>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/user">Utenti</a></li>
+            <li><a href="/status">Stato</a></li>
+            <li><a href="/transactions">Transazioni</a></li>
+            <li><a href="/referrals">Referrals</a></li>
+            <li><a href="/payments">Pagamenti</a></li>
+            <li><a href="/admin">Admin</a></li>
+        </ul>
+    </nav>
+
+    {% block content %}{% endblock %}
+</body>
+</html>

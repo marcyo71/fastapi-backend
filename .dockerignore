@@ -1,0 +1,33 @@
+﻿# Ambienti virtuali
+.venv/
+env/
+
+# Cache Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Build e distribuzione
+dist/
+build/
+
+# Node / frontend
+node_modules/
+
+# Git e VCS
+.git/
+.gitignore
+
+# Docker
+.dockerignore
+Dockerfile
+
+# Config locali
+*.env
+*.local
+*.log
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp

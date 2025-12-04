@@ -2,16 +2,21 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}FastAPI - Utente{% endblock %}</title>
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <!-- CSS -->
-    <link rel="stylesheet" href="/static/style.css">
+    <title>Area Utente</title>
+    <link rel="stylesheet" href="/static/style.css"> 
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
 </head>
 <body>
     <nav>
-        <a href="/"><i class="fas fa-home home-icon"></i> Home</a>
-        <a href="/pagamenti"><i class="fas fa-credit-card pay-icon"></i> Pagamenti</a>
+        <!-- Link a sinistra -->
+        <ul class="nav-left">
+            <li><a href="/pagamenti" class="nav-btn">Home</a></li>
+            <li><a href="/pagamenti" class="nav-btn">Pagamenti</a></li>
+        </ul>
+        <!-- Logout a destra -->
+        <form action="/logout" method="get">
+            <button type="submit" class="logout-btn">Logout</button>
+        </form>
     </nav>
 
     <main>

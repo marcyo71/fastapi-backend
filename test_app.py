@@ -1,7 +1,7 @@
-from fastapi import FastAPI
+from app import app
 from config import settings  # importa la tua configurazione da config.py
 
-app = FastAPI(title="Test App")
+app = app(title="Test App")
 
 @app.get("/ping")
 def ping():
