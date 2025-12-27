@@ -1,36 +1,26 @@
-{% extends "base_admin.html" %}
-
-{% block title %}Storico Transazioni{% endblock %}
-
-{% block content %}
-<h1><i class="fas fa-exchange-alt"></i> Storico Transazioni</h1>
-
-<table class="table-standard">
-  <thead>
-    <tr>
-      <th>ID Transazione</th>
-      <th>Data</th>
-      <th>Utente</th>
-      <th>Importo</th>
-      <th>Stato</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>1001</td>
-      <td>2025-12-01</td>
-      <td>Mario Rossi</td>
-      <td>€50,00</td>
-      <td>Completata</td>
-    </tr>
-    <tr>
-      <td>1002</td>
-      <td>2025-12-02</td>
-      <td>Luigi Bianchi</td>
-      <td>€75,00</td>
-      <td>In attesa</td>
-    </tr>
-    <!-- altre transazioni -->
-  </tbody>
-</table>
-{% endblock %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Transazioni</title>
+</head>
+<body>
+    <h1>Transazioni</h1>
+    {% if earnings %}
+        <h2>Guadagni Utente {{ user_id }}</h2>
+        <ul>
+        {% for e in earnings %}
+            <li>{{ e.amount }} €</li>
+        {% endfor %}
+        </ul>
+    {% elif events %}
+        <h2>Eventi Stripe</h2>
+        <ul>
+        {% for e in events %}
+            <li>{{ e.event_id }} - {{ e.event_type }} ({{ e.created_at }})</li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>Nessun dato trovato.</p>
+    {% endif %}
+</body>
+</html>

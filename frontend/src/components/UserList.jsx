@@ -1,47 +1,31 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
-const UserList = ({ refreshTrigger }) => {
+export default function UserList() {
   const [users, setUsers] = useState([]);
-  const [error, setError] = useState(null);
-
-  const fetchUsers = () => {
-    fetch('/users')
-      .then((res) => {
-        if (!res.ok) throw new Error('Errore nel recupero utenti');
-        return res.json();
-      })
-      .then((data) => setUsers(data))
-      .catch((err) => setError(err.message));
-  };
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    fetchUsers();
-  }, [refreshTrigger]);
-
-  if (error) return <div>Errore: {error}</div>;
-  if (!users.length) return <div>Nessun utente trovato.</div>;
+    fetch("/api/users")
+      .then(res => res.json())
+      .then(data => setUsers(data.users || []))
+      .catch(err => setError(err.message));
+  }, []);
 
   return (
-    <div style={{ border: '1px solid #ccc', padding: '1rem', borderRadius: '8px', marginTop: '1rem' }}>
-      <h2>👥 Utenti registrati</h2>
-      <ul>
-        {users.map((user) => (
-          <li key={user.id}>
-            <strong>{user.name}</strong> — {user.email}
-          </li>
-        ))}
-      </ul>
+    <div className="p-4 bg-white shadow rounded">
+      <h2 className="text-xl font-bold mb-2">Lista Utenti</h2>
+      {error && <p className="text-red-500">Errore: {error}</p>}
+      {users.length === 0 && !error ? (
+        <p>Nessun utente.</p>
+      ) : (
+        <ul className="list-disc pl-5">
+          {users.map(u => (
+            <li key={u.id}>
+              {u.id} - {u.name}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
-};
-
-export default UserList;
-<ul>
-  {users.map((user) => (
-    <li key={user.id} className="border-b py-2">
-      <strong>{user.name}</strong> — {user.email}
-      <br />
-      <span className="text-sm text-gray-600">IBAN: {user.iban || 'Non disponibile'}</span>
-    </li>
-  ))}
-</ul>
+}

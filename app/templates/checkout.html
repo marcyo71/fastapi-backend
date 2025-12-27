@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px auto;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        .methods {
+            margin-top: 20px;
+        }
+
+        .method {
+            padding: 14px 20px;
+            margin-bottom: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+            background: #fafafa;
+        }
+
+        .method:hover {
+            background: #f0f0f0;
+        }
+
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Checkout</h1>
+    <p>Seleziona un metodo di pagamento:</p>
+
+    <div class="methods">
+        {% for m in payment_methods %}
+            <div class="method" data-method="{{ m }}">{{ m | capitalize }}</div>
+        {% endfor %}
+    </div>
+
+    <script>
+        const methods = document.querySelectorAll(".method");
+
+        methods.forEach(btn => {
+            btn.addEventListener("click", async () => {
+                const method = btn.dataset.method;
+
+                btn.classList.add("loading");
+                btn.textContent = "Caricamento...";
+
+                try {
+                    let endpoint = "";
+
+                    if (method === "card") {
+                        endpoint = "/checkout/stripe";
+                    } else if (method === "klarna") {
+                        endpoint = "/checkout/klarna";
+                    } else if (method === "google_pay") {
+                        endpoint = "/checkout/google-pay";
+                    }
+
+                    const res = await fetch(endpoint, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" }
+                    });
+
+                    const data = await res.json();
+
+                    if (data.checkout_url) {
+                        window.location.href = data.checkout_url;
+                    } else {
+                        alert("Errore: URL non ricevuto");
+                    }
+
+                } catch (err) {
+                    console.error(err);
+                    alert("Errore durante il checkout");
+                } finally {
+                    btn.classList.remove("loading");
+                    btn.textContent = method.charAt(0).toUpperCase() + method.slice(1);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

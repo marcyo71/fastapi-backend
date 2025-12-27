@@ -1,17 +1,9 @@
-{% extends "base_admin.html" %}
-
-{% block title %}Stato Sistema{% endblock %}
-
-{% block content %}
-<h2>Stato del sistema</h2>
-<p>Ultimo aggiornamento: {{ now }}</p>
-
-{% if not request.cookies.get("session") %}
-<h3>Login amministratore</h3>
-<form action="/login" method="post">
-    <input type="text" name="username" placeholder="Username"/>
-    <input type="password" name="password" placeholder="Password"/>
-    <button type="submit">Accedi</button>
-</form>
-{% endif %}
-{% endblock %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Status</title>
+</head>
+<body>
+    <h1>{{ status }}</h1>
+</body>
+</html>

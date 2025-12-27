@@ -1,93 +1,189 @@
-/* Sfondo generale */
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    color: #000;
-}
-
-/* Barra menu */
-nav {
-    background-color: #000;
-    padding: 10px 20px;
-    display: flex;
-    justify-content: space-between; /* link a sinistra, logout a destra */
-    align-items: center;
-}
-
-/* Lista link orizzontale */
-nav ul.nav-left {
-    list-style: none;
+/* Reset di base */
+* {
     margin: 0;
     padding: 0;
-    display: flex; /* forza disposizione orizzontale */
+    box-sizing: border-box;
 }
 
-/* Spaziatura tra bottoni */
-nav ul.nav-left li {
-    margin-right: 10px;
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background-color: #f5f7fa;
+    color: #333;
+    line-height: 1.6;
 }
 
-/* Bottoni di navigazione */
-.nav-btn {
-    display: inline-block;
-    padding: 10px 18px;
-    background-color: #0066cc;
-    color: #fff;
-    text-decoration: none; /* niente sottolineatura */
-    font-weight: bold;
-    border-radius: 5px;
-    transition: background-color 0.3s;
+/* Navbar */
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #2c3e50;
+    padding: 0.8rem 1.2rem;
 }
 
-.nav-btn:hover {
-    background-color: #004080;
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 1rem;
 }
 
-/* Bottone Logout */
+nav a.nav-btn {
+    color: #ecf0f1;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    transition: background 0.3s;
+}
+
+nav a.nav-btn:hover {
+    background: #34495e;
+}
+
 .logout-btn {
-    background-color: #cc0000;
+    background: #e74c3c;
     color: #fff;
-    padding: 10px 18px;
     border: none;
-    border-radius: 5px;
-    font-weight: bold;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    font-weight: 600;
+    transition: background 0.3s;
 }
 
 .logout-btn:hover {
-    background-color: #990000;
+    background: #c0392b;
 }
 
-/* Contenuto principale */
+/* Main content */
 main {
-    padding: 20px;
+    max-width: 800px;
+    margin: 2rem auto;
+    background: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-/* Tabelle standard (utenti, transazioni, ecc.) */
-.table-standard {
+h2 {
+    margin-bottom: 1rem;
+    color: #2c3e50;
+}
+
+/* Form pagamenti */
+form {
+    margin-top: 1rem;
+}
+
+form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+form select {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 1rem;
     width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
 }
 
-.table-standard th {
-    background-color: #0066cc;
+form button {
+    background: #27ae60;
     color: #fff;
-    padding: 12px 20px;
-    text-align: left;
+    border: none;
+    padding: 0.7rem 1.2rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s;
 }
 
-.table-standard td {
-    padding: 12px 20px;
-    border-bottom: 1px solid #ddd;
+form button:hover {
+    background: #1e8449;
 }
 
-.table-standard tr:nth-child(even) {
-    background-color: #f9f9f9;
+/* Box conferma pagamento */
+.confirmation-box {
+    background: #ecf9f1;
+    border: 1px solid #27ae60;
+    padding: 1rem;
+    border-radius: 6px;
+    margin: 1rem 0;
 }
 
-.table-standard tr:hover {
-    background-color: #f1f1f1;
+.status-ok {
+    color: #27ae60;
+    font-weight: bold;
+}
+
+/* Link di ritorno */
+a.nav-btn {
+    display: inline-block;
+    margin-top: 1rem;
+    background: #2980b9;
+    color: #fff;
+    padding: 0.6rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background 0.3s;
+}
+
+a.nav-btn:hover {
+    background: #1f6391;
+}
+
+/* --- Responsive design --- */
+@media (max-width: 768px) {
+    nav {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    nav ul {
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .logout-btn {
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+
+    main {
+        margin: 1rem;
+        padding: 1rem;
+    }
+
+    form select,
+    form button {
+        width: 100%;
+    }
+
+    a.nav-btn {
+        display: block;
+        width: 100%;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        font-size: 0.9rem;
+    }
+
+    h2 {
+        font-size: 1.2rem;
+    }
+
+    nav a.nav-btn {
+        padding: 0.3rem 0.6rem;
+    }
+
+    form button {
+        padding: 0.6rem;
+        font-size: 0.9rem;
+    }
 }

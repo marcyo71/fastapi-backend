@@ -1,26 +1,10 @@
 <!DOCTYPE html>
-<html lang="it">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Area Utente</title>
-    <link rel="stylesheet" href="/static/style.css"> 
-    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <title>Dettaglio Utente</title>
 </head>
 <body>
-    <nav>
-        <!-- Link a sinistra -->
-        <ul class="nav-left">
-            <li><a href="/pagamenti" class="nav-btn">Home</a></li>
-            <li><a href="/pagamenti" class="nav-btn">Pagamenti</a></li>
-        </ul>
-        <!-- Logout a destra -->
-        <form action="/logout" method="get">
-            <button type="submit" class="logout-btn">Logout</button>
-        </form>
-    </nav>
-
-    <main>
-        {% block content %}{% endblock %}
-    </main>
+    <h1>Utente {{ user.id }}</h1>
+    <p>Nome: {{ user.name }}</p>
 </body>
 </html>

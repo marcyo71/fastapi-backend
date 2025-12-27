@@ -1,57 +1,24 @@
-from pydantic import BaseModel, EmailStr, Field
-from typing import Optional, List
-from datetime import datetime
+from pydantic import BaseModel, EmailStr
+import enum
 
-# ---- UserStatus ----
-class UserStatusCreate(BaseModel):
-    status: str = Field(..., min_length=2, max_length=32)
+class UserStatus(str, enum.Enum):
+    abbonato = "abbonato"
+    attivo = "attivo"
+    sospeso = "sospeso"
+    free = "free"
 
-class UserStatusRead(BaseModel):
-    id: int
-    status: str
-
-    class Config:
-        from_attributes = True
-
-# ---- User ----
-class UserCreate(BaseModel):
-    name: str = Field(..., min_length=1, max_length=64)
+class UserBase(BaseModel):
+    username: str
     email: EmailStr
-    status_id: int
-
-class UserRead(BaseModel):
-    id: int
     name: str
-    email: EmailStr
-    status_id: int
+    status: UserStatus
 
-    class Config:
-        from_attributes = True
+class UserCreate(UserBase):
+    password: str
 
-# ---- Transaction ----
-class TransactionCreate(BaseModel):
-    user_id: int
-    amount: float = Field(..., ge=0.0)
-
-class TransactionRead(BaseModel):
+class UserOut(UserBase):
     id: int
-    user_id: int
-    amount: float
-    created_at: datetime
+    created_at: str
 
     class Config:
-        from_attributes = True
-
-# ---- Referral ----
-class ReferralCreate(BaseModel):
-    referrer_id: int
-    referred_id: int
-
-class ReferralRead(BaseModel):
-    id: int
-    referrer_id: int
-    referred_id: int
-    created_at: datetime
-
-    class Config:
-        from_attributes = True
+        orm_mode = True

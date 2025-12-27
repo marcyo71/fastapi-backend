@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Pagamenti</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 30px;
+            background: #fafafa;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        .filters {
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #fff;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+        }
+
+        .filters label {
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .filters select {
+            padding: 5px;
+            margin-right: 20px;
+        }
+
+        .total-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8ffe8;
+            border: 1px solid #b2ffb2;
+            border-radius: 6px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+            background: #fff;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        th {
+            background: #f0f0f0;
+            padding: 12px;
+            text-align: left;
+            border-bottom: 2px solid #ddd;
+        }
+
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:hover {
+            background: #f9f9f9;
+        }
+
+        .status-paid {
+            color: green;
+            font-weight: bold;
+        }
+
+        .status-pending {
+            color: orange;
+            font-weight: bold;
+        }
+
+        .status-failed {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>📊 Pagamenti</h1>
+
+<div class="filters">
+    <form method="get" action="/admin/payments">
+        <label>Metodo:</label>
+        <select name="method">
+            <option value="">Tutti</option>
+            <option value="stripe" {% if filters.method == "stripe" %}selected{% endif %}>Stripe</option>
+            <option value="klarna" {% if filters.method == "klarna" %}selected{% endif %}>Klarna</option>
+            <option value="google_pay" {% if filters.method == "google_pay" %}selected{% endif %}>Google Pay</option>
+        </select>
+
+        <label>Status:</label>
+        <select name="status">
+            <option value="">Tutti</option>
+            <option value="pending" {% if filters.status == "pending" %}selected{% endif %}>Pending</option>
+            <option value="paid" {% if filters.status == "paid" %}selected{% endif %}>Paid</option>
+            <option value="failed" {% if filters.status == "failed" %}selected{% endif %}>Failed</option>
+        </select>
+
+        <button type="submit">Filtra</button>
+    </form>
+</div>
+
+<div class="total-box">
+    💰 Totale incassato: <strong>{{ total }} €</strong>
+</div>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Session ID</th>
+        <th>Metodo</th>
+        <th>Importo</th>
+        <th>Status</th>
+    </tr>
+
+    {% for p in payments %}
+    <tr>
+        <td>{{ p.id }}</td>
+        <td>{{ p.session_id }}</td>
+        <td>{{ p.method }}</td>
+        <td>{{ p.amount }} €</td>
+        <td class="status-{{ p.status }}">{{ p.status }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+</body>
+</html>

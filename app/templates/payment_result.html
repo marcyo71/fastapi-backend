@@ -1,0 +1,15 @@
+{% extends "base_user.html" %}
+
+{% block title %}Conferma Pagamento{% endblock %}
+
+{% block content %}
+<h2>✅ Conferma Pagamento</h2>
+<p>Hai scelto il piano: <strong>{{ plan }}</strong></p>
+
+<div class="confirmation-box">
+    <p>Il tuo checkout è stato creato con successo.</p>
+    <p>Status: <span class="status-ok">Creato</span></p>
+</div>
+
+<a href="/pagamenti" class="nav-btn">Torna all'Area Pagamenti</a>
+{% endblock %}

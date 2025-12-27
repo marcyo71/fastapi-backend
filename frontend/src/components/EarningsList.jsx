@@ -1,59 +1,32 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
-const EarningsList = ({ userId }) => {
+export default function EarningsList({ userId }) {
   const [earnings, setEarnings] = useState([]);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (!userId) return;
-
-    fetch(`/users/${userId}/earnings`)
-      .then((res) => {
-        if (!res.ok) throw new Error('Errore nel recupero guadagni');
-        return res.json();
-      })
-      .then((data) => setEarnings(data))
-      .catch((err) => setError(err.message));
+    fetch(`/api/earnings/${userId}`)
+      .then(res => res.json())
+      .then(data => setEarnings(data.earnings))
+      .catch(err => setError(err.message));
   }, [userId]);
 
-  if (!userId) return <div>Seleziona un utente per vedere i guadagni.</div>;
-  if (error) return <div>Errore: {error}</div>;
-  if (!earnings.length) return <div>Nessun guadagno registrato.</div>;
-
   return (
-    <div className="bg-white shadow-md rounded-md p-4 mt-4">
-      <h2 className="text-lg font-semibold mb-2">💰 Guadagni utente #{userId}</h2>
-      <ul className="space-y-2">
-        {earnings.map((e) => (
-          <li key={e.id} className="text-sm">
-            {e.amount} {e.currency} — <em>{new Date(e.timestamp).toLocaleString()}</em>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-};
-
-export default EarningsList;
-import EarningsList from './components/EarningsList';
-import { useState } from 'react';
-
-function App() {
-  const [selectedUserId, setSelectedUserId] = useState(null);
-
-  return (
-    <div>
-      <h1>Dashboard</h1>
-      <button onClick={() => setSelectedUserId(1)}>Mostra guadagni utente #1</button>
-      <EarningsList userId={selectedUserId} />
+    <div className="p-4 bg-white shadow rounded">
+      <h2 className="text-xl font-bold mb-4">Lista Guadagni Utente {userId}</h2>
+      {error && <p className="text-red-500 mb-2">Errore: {error}</p>}
+      {earnings.length === 0 && !error ? (
+        <p className="text-gray-600">Nessun guadagno registrato.</p>
+      ) : (
+        <ul className="list-disc pl-5 space-y-1">
+          {earnings.map((e, i) => (
+            <li key={i} className="text-gray-800">
+              {e} EUR
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
-import { fetchUserEarnings } from '../api/api';
-
-useEffect(() => {
-  if (!userId) return;
-  fetchUserEarnings(userId)
-    .then(setEarnings)
-    .catch((err) => setError(err.message));
-}, [userId]);
