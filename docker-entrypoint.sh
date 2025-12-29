@@ -1,11 +1,11 @@
-#!/bin/bash
+#!/bin/sh
 set -e
 
-echo "⏳ Attendo che il database sia pronto..."
-sleep 3
+# Default locale se Railway non passa PORT
+PORT=${PORT:-8000}
 
-echo "🚀 Applico migrazioni Alembic..."
+echo "Running Alembic migrations..."
 alembic upgrade head
 
-echo "🔥 Avvio FastAPI..."
-exec uvicorn app.main:app --host 0.0.0.0 --port 8000
+echo "Starting Uvicorn on port $PORT..."
+exec uvicorn app.main:app --host 0.0.0.0 --port $PORT
