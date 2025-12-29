@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestione Utenti - Admin</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+</head>
+<body>
+    <!-- Menu gestione utenti -->
+    <nav>
+        <ul>
+            <li><a href="/admin">Home Admin</a></li>
+            <li><a href="/utenti">Utenti</a></li>
+            <li><a href="/stato">Stato</a></li>
+            <li><a href="/transazioni">Transazioni</a></li>
+            <li><a href="/dashboard">Dashboard</a></li>
+        </ul>
+    </nav>
+
+    <!-- Contenuto dinamico -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

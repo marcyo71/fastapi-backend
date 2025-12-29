@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Transazioni</title>
+</head>
+<body>
+    <h1>Transazioni</h1>
+    {% if earnings %}
+        <h2>Guadagni Utente {{ user_id }}</h2>
+        <ul>
+        {% for e in earnings %}
+            <li>{{ e.amount }} €</li>
+        {% endfor %}
+        </ul>
+    {% elif events %}
+        <h2>Eventi Stripe</h2>
+        <ul>
+        {% for e in events %}
+            <li>{{ e.event_id }} - {{ e.event_type }} ({{ e.created_at }})</li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>Nessun dato trovato.</p>
+    {% endif %}
+</body>
+</html>

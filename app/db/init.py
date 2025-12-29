@@ -1,0 +1,16 @@
+from app.db.database import Base, engine
+
+# importa i modelli per registrare le tabelle
+from app.models.user import User
+from app.models.referral import Referral
+from app.models.transaction import Transaction
+
+def init_db():
+    print("🔄 Dropping all tables...")
+    Base.metadata.drop_all(bind=engine)
+    print("✅ Dropped.")
+
+    print("🛠️ Creating all tables...")
+    Base.metadata.create_all(bind=engine)
+    print("✅ Database initialized.")
+

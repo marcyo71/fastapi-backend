@@ -1,23 +1,29 @@
-from backend.db.database import SessionLocal
-from backend.models.user import User
-from backend.models.user import User
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from backend.utils import get_password_hash
+from app.models import User, Base  # ⚠️ Adatta l'import se User/Base sono altrove
 
-def seed_users():
+DATABASE_URL = "postgresql://marcy:tuapassword@localhost:5432/fastapi_db"
+
+engine = create_engine(DATABASE_URL)
+SessionLocal = sessionmaker(bind=engine)
+
+def seed_user():
     db = SessionLocal()
+    try:
+        plain_password = "m@rcy2025"
+        hashed_password = get_password_hash(plain_password)
 
-    # Pulisce eventuali dati vecchi
-    db.query(User).delete()
+        user = User(
+            email="marcy@example.com",
+            password=hashed_password   # <-- usa 'password'
+        )
 
-    # Utente base con ref_code
-    alice = User(name="Alice", email="alice@test.com", balance=50.0, ref_code="ALICE123")
-    bob = User(name="Bob", email="bob@test.com", balance=20.0, ref_code="BOB123", ref_by="ALICE123")
-    carol = User(name="Carol", email="carol@test.com", balance=30.0, ref_code="CAROL123", ref_by="ALICE123")
-    dave = User(name="Dave", email="dave@test.com", balance=10.0, ref_code="DAVE123", ref_by="BOB123")
-
-    db.add_all([alice, bob, carol, dave])
-    db.commit()
-    db.close()
-    print("Seed completato: utenti inseriti.")
+        db.add(user)
+        db.commit()
+        print(f"Utente creato: marcy@example.com con password '{plain_password}'")
+    finally:
+        db.close()
 
 if __name__ == "__main__":
-    seed_users()
+    seed_user()

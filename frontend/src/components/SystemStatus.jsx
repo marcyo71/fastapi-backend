@@ -1,31 +1,33 @@
 import React, { useEffect, useState } from 'react';
 
+const BASE_URL = import.meta.env.PROD
+  ? 'https://marcy-api.onrender.com'
+  : '';
+
 const SystemStatus = () => {
-  const [statusData, setStatusData] = useState(null);
-  const [error, setError] = useState(null);
+  const [status, setStatus] = useState('⏳ Verifica in corso...');
 
   useEffect(() => {
-    fetch('/status')
-      .then((res) => {
-        if (!res.ok) throw new Error('Errore nel recupero dello stato');
-        return res.json();
-      })
-      .then((data) => setStatusData(data))
-      .catch((err) => setError(err.message));
+    const checkStatus = async () => {
+      try {
+        const res = await fetch(`${BASE_URL}/health`);
+        if (res.ok) {
+          setStatus('✅ Sistema Online');
+        } else {
+          setStatus('❌ Sistema Offline');
+        }
+      } catch (err) {
+        setStatus('❌ Errore di connessione');
+      }
+    };
+
+    checkStatus();
   }, []);
 
-  if (error) return <div>Errore: {error}</div>;
-  if (!statusData) return <div>Caricamento stato sistema...</div>;
-
   return (
-    <div style={{ border: '1px solid #ccc', padding: '1rem', borderRadius: '8px' }}>
-      <h2>🖥️ Stato Backend</h2>
-      <ul>
-        <li><strong>Status:</strong> {statusData.status}</li>
-        <li><strong>Debug:</strong> {statusData.debug}</li>
-        <li><strong>Ambiente:</strong> {statusData.env}</li>
-        <li><strong>Uptime:</strong> {statusData.uptime}</li>
-      </ul>
+    <div className="bg-white shadow-md rounded-md p-4 mt-4">
+      <h2 className="text-lg font-semibold mb-2">🖥️ Stato Sistema</h2>
+      <p>{status}</p>
     </div>
   );
 };

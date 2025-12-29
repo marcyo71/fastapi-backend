@@ -1,55 +1,60 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-const BASE_URL = import.meta.env.PROD
-  ? 'https://your-backend.onrender.com' // 🔁 Sostituisci con il tuo URL reale
-  : '';
-
-const IBANForm = ({ userId, currentIban, onSuccess }) => {
-  const [iban, setIban] = useState(currentIban || '');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+export default function IBANForm({ userId }) {
+  const [iban, setIban] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError(null);
+    setError("");
+    setSuccess("");
 
     try {
-      const res = await fetch(`${BASE_URL}/users/${userId}/iban`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch(`/api/iban/${userId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ iban }),
       });
 
-      if (!res.ok) throw new Error('Errore durante l’aggiornamento dell’IBAN');
-      onSuccess && onSuccess(); // callback per aggiornare il profilo
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`Errore ${res.status}: ${text}`);
+      }
+
+      setSuccess("IBAN registrato con successo!");
+      setIban("");
     } catch (err) {
       setError(err.message);
-    } finally {
-      setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mt-4 space-y-2">
-      <label className="block text-sm font-medium">Modifica IBAN</label>
-      <input
-        type="text"
-        value={iban}
-        onChange={(e) => setIban(e.target.value)}
-        className="border rounded px-2 py-1 w-full"
-        placeholder="Inserisci nuovo IBAN"
-      />
-      {error && <p className="text-red-500 text-sm">{error}</p>}
-      <button
-        type="submit"
-        disabled={loading}
-        className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700"
-      >
-        {loading ? 'Salvataggio...' : 'Salva IBAN'}
-      </button>
-    </form>
+    <div className="p-4 bg-white shadow rounded">
+      <h2 className="text-xl font-bold mb-4">Aggiungi IBAN</h2>
+      {error && <p className="text-red-500 mb-2">Errore: {error}</p>}
+      {success && <p className="text-green-600 mb-2">{success}</p>}
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block font-medium mb-1">
+            IBAN:
+            <input
+              type="text"
+              value={iban}
+              onChange={(e) => setIban(e.target.value)}
+              className="border rounded px-2 py-1 w-full"
+              placeholder="IT60X0542811101000000123456"
+              required
+            />
+          </label>
+        </div>
+        <button
+          type="submit"
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        >
+          Registra
+        </button>
+      </form>
+    </div>
   );
-};
-
-export default IBANForm;
+}

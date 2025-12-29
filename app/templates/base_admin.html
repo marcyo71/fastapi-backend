@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Area Amministratore</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <nav>
+        <!-- Link a sinistra -->
+        <ul class="nav-left">
+            <li><a href="/admin" class="nav-btn">Home</a></li>
+            <li><a href="/users" class="nav-btn">Utenti</a></li>
+            <li><a href="/transazioni" class="nav-btn">Transazioni</a></li>
+            <li><a href="/dashboard" class="nav-btn">Dashboard</a></li>
+            <li><a href="/stato" class="nav-btn">Stato</a></li>
+        </ul>
+        <!-- Logout a destra -->
+        <form action="/logout" method="get">
+            <button type="submit" class="logout-btn">Logout</button>
+        </form>
+    </nav>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+</body>
+</html>

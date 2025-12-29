@@ -1,26 +1,24 @@
-from pydantic import BaseModel
-from typing import Optional
+from pydantic import BaseModel, EmailStr
+import enum
 
-class UserCreate(BaseModel):
-    email: str
+class UserStatus(str, enum.Enum):
+    abbonato = "abbonato"
+    attivo = "attivo"
+    sospeso = "sospeso"
+    free = "free"
+
+class UserBase(BaseModel):
+    username: str
+    email: EmailStr
     name: str
-    status: str
+    status: UserStatus
 
-class UserRead(UserCreate):
+class UserCreate(UserBase):
+    password: str
+
+class UserOut(UserBase):
     id: int
-    class Config:
-        orm_mode = True
+    created_at: str
 
-class TransactionCreate(BaseModel):
-    session_id: str
-    customer_email: str
-    amount_total: int
-    status: str
-    amount: float
-    currency: str
-    user_id: int
-
-class TransactionRead(TransactionCreate):
-    id: int
     class Config:
         orm_mode = True
