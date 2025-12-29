@@ -30,6 +30,21 @@ target_metadata = Base.metadata
 # URL del DB
 DATABASE_URL = settings.database_url
 
+
+# 🔥 AGGIUNTA: include_object per evitare migrazioni sporche
+def include_object(object, name, type_, reflected, compare_to):
+    # Ignora tabelle di sistema PostgreSQL
+    if type_ == "table" and name.startswith("pg_"):
+        return False
+
+    # Ignora differenze spurie sui default generati dal DB
+    if type_ == "column":
+        if object.server_default and compare_to is not None:
+            return False
+
+    return True
+
+
 def run_migrations_offline() -> None:
     """Esecuzione offline (senza connessione)."""
     context.configure(
@@ -37,6 +52,7 @@ def run_migrations_offline() -> None:
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
+        include_object=include_object,   # 🔥 AGGIUNTA
     )
 
     with context.begin_transaction():
@@ -61,6 +77,7 @@ def do_run_migrations(connection: Connection) -> None:
         connection=connection,
         target_metadata=target_metadata,
         compare_type=True,
+        include_object=include_object,   # 🔥 AGGIUNTA
     )
 
     with context.begin_transaction():

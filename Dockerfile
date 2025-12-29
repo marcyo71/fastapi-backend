@@ -1,29 +1,28 @@
-# Usa un'immagine base più leggera
 FROM python:3.11-slim
-
-# Imposta la working directory
-WORKDIR /app
 
 # Evita output bufferizzato
 ENV PYTHONUNBUFFERED=1
 
-# Installa dipendenze di sistema (per psycopg2 e compilazioni)
+# Installa dipendenze di sistema
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Copia solo requirements per sfruttare la cache
+# Crea directory app
+WORKDIR /app
+
+# Copia requirements
 COPY requirements.txt .
 
-# Installa le dipendenze Python
+# Installa dipendenze Python
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copia il resto del codice
+# Copia tutto il progetto
 COPY . .
 
-# Espone la porta
+# Espone la porta FastAPI
 EXPOSE 8000
 
-# Comando di avvio
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Usa l'entrypoint (lo creiamo dopo)
+ENTRYPOINT ["/app/docker-entrypoint.sh"]

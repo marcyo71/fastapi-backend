@@ -129,25 +129,25 @@ app.add_middleware(RequestLogMiddleware)
 # -----------------------------------
 # ROUTERS
 # -----------------------------------
+
 # Stripe
-app.include_router(stripe_router)
+app.include_router(stripe_router, prefix="/stripe", tags=["stripe"])
 app.include_router(payment_status, prefix="/api/status", tags=["status"])
-app.include_router(checkout_router)
-app.include_router(stripe_events_router)
-app.include_router(stripe_webhook_router)
-app.include_router(payment_element_router)
+app.include_router(checkout_router, prefix="/stripe")
+app.include_router(stripe_events_router, prefix="/stripe")
+app.include_router(payment_element_router, prefix="/stripe")
 
 # Business
-app.include_router(payments_router.router)
-app.include_router(referrals_api.router)
-app.include_router(transactions_api.router)
-app.include_router(user_status_api.router)
+app.include_router(payments_router.router, prefix="/api/payments")
+app.include_router(referrals_api.router, prefix="/api/referrals")
+app.include_router(transactions_api.router, prefix="/api/transactions")
+app.include_router(user_status_api.router, prefix="/api/user-status")
 
 # System
 app.include_router(ping.router)
 app.include_router(dashboard.router)
-app.include_router(users_api.router)
-app.include_router(auth_router)
+app.include_router(users_api.router, prefix="/api/users")
+app.include_router(auth_router, prefix="/api/auth")
 
 
 # -----------------------------------
