@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Request, HTTPException
-from app.config.settings import settings
+from app.core.config import settings
 import stripe
 
 router = APIRouter(tags=["stripe"])

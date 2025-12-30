@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from pydantic import BaseModel, EmailStr
 
-from app.db.session import get_db
+from app.db.dependencies import get_db
 from app import models
 from app.core.security import get_password_hash
 

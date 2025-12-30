@@ -1,13 +1,15 @@
-from fastapi import Security, HTTPException
+from fastapi import Depends, Security, HTTPException
 from fastapi.security import APIKeyHeader
 from jose import jwt, JWTError, ExpiredSignatureError
 from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app.models import User
-from app.config.settings import settings   # 👈 importa l’istanza
+from app.core.config import settings   # importa l’istanza di configurazione
 
+# Header per autenticazione
 api_key_header = APIKeyHeader(name="Authorization")
 
+# ---- DB DEPENDENCY ----
 def get_db():
     db = SessionLocal()
     try:
@@ -15,6 +17,20 @@ def get_db():
     finally:
         db.close()
 
+# ---- SETTINGS DEPENDENCY ----
+def get_settings_dependency():
+    return settings
+
+# ---- INIT & CLOSE DB (per lifespan in main.py) ----
+async def init_db():
+    # qui puoi mettere eventuali inizializzazioni del DB
+    pass
+
+async def close_db():
+    # chiusura pulita del DB (se serve)
+    pass
+
+# ---- JWT DECODER ----
 def decode_access_token(token: str):
     try:
         payload = jwt.decode(token, settings.secret_key, algorithms=[settings.algorithm])
@@ -24,14 +40,13 @@ def decode_access_token(token: str):
     except JWTError:
         raise HTTPException(status_code=401, detail="Token non valido")
 
-def get_current_user(auth_header: str = Security(api_key_header), db: Session = Security(get_db)):
+# ---- CURRENT USER DEPENDENCY ----
+def get_current_user(auth_header: str = Security(api_key_header), db: Session = Depends(get_db)):
     if not auth_header:
         raise HTTPException(status_code=401, detail="Header Authorization mancante")
 
-    if auth_header.startswith("Bearer "):
-        token = auth_header.split(" ")[1]
-    else:
-        token = auth_header
+    # Supporta sia "Bearer <token>" che token diretto
+    token = auth_header.split(" ")[1] if auth_header.startswith("Bearer ") else auth_header
 
     payload = decode_access_token(token)
     email: str = payload.get("sub")
@@ -43,4 +58,3 @@ def get_current_user(auth_header: str = Security(api_key_header), db: Session = 
         raise HTTPException(status_code=404, detail="Utente non trovato")
 
     return user
-

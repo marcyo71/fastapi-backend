@@ -2,7 +2,7 @@ import stripe
 from fastapi import APIRouter, Request, Response, Form
 from fastapi.responses import JSONResponse
 from fastapi.templating import Jinja2Templates
-from app.config.settings import settings
+from app.core.config import settings
 from typing import List
 
 router = APIRouter(prefix="/payments", tags=["payments"])

@@ -1,93 +1,57 @@
-print("AUTH ROUTER LOADED FROM:", __file__)
-
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
-from jose import jwt, JWTError
+from sqlalchemy.future import select
+from passlib.context import CryptContext
+from jose import JWTError, jwt
+from datetime import datetime, timedelta
 
-from app.core.security import verify_password, create_access_token, get_password_hash
-from app.crud.user_crud import get_user_by_email, get_user
-from app.db.dependencies import get_db
-from app.config.settings import settings
+from app.db.session import get_db
+from app.models.user import User
+from app.core.config import settings
 
-router = APIRouter(prefix="/auth", tags=["Auth"])
+router = APIRouter(prefix="/auth", tags=["auth"])
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+# ---- UTILS ----
+def hash_password(password: str) -> str:
+    return pwd_context.hash(password)
 
-# ---------------------------------------------------------
-# LOGIN
-# ---------------------------------------------------------
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    return pwd_context.verify(plain_password, hashed_password)
+
+def create_access_token(data: dict, expires_delta: timedelta | None = None):
+    to_encode = data.copy()
+    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=30))
+    to_encode.update({"exp": expire})
+    return jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+
+# ---- REGISTER ----
+@router.post("/register")
+async def register_user(email: str, name: str, password: str, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(User).where(User.email == email))
+    existing_user = result.scalars().first()
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Email già registrata")
+
+    new_user = User(
+        email=email,
+        name=name,
+        hashed_password=hash_password(password),
+    )
+    db.add(new_user)
+    await db.commit()
+    await db.refresh(new_user)
+
+    return {"id": new_user.id, "email": new_user.email, "name": new_user.name}
+
+# ---- LOGIN ----
 @router.post("/login")
-async def login(
-    form_data: OAuth2PasswordRequestForm = Depends(),
-    db: AsyncSession = Depends(get_db)
-):
-    email = form_data.username
-    password = form_data.password
+async def login_user(email: str, password: str, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(User).where(User.email == email))
+    user = result.scalars().first()
+    if not user or not verify_password(password, user.hashed_password):
+        raise HTTPException(status_code=401, detail="Credenziali non valide")
 
-    print("DEBUG EMAIL:", repr(email))
-    print("DEBUG PASSWORD:", repr(password))
-
-    user = await get_user_by_email(db, email=email)
-    print("DEBUG USER OBJECT:", user)
-
-    if not user:
-        print("DEBUG: USER NOT FOUND IN DB")
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-
-    print("DEBUG HASH FROM DB:", user.password_hash)
-
-    if not verify_password(password, user.password_hash):
-        print("DEBUG: PASSWORD MISMATCH")
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-
-    token = create_access_token({"sub": str(user.id)})
-    return {"access_token": token, "token_type": "bearer"}
-
-
-# ---------------------------------------------------------
-# AUTHORIZE
-# ---------------------------------------------------------
-@router.get("/authorize")
-async def authorize(
-    token: str = Depends(oauth2_scheme),
-    db: AsyncSession = Depends(get_db)
-):
-    try:
-        payload = jwt.decode(
-            token,
-            settings.secret_key,
-            algorithms=[settings.algorithm]
-        )
-        user_id = payload.get("sub")
-        if not user_id:
-            raise HTTPException(status_code=401, detail="Invalid token")
-    except JWTError:
-        raise HTTPException(status_code=401, detail="Invalid or expired token")
-
-    user = await get_user(db, int(user_id))
-
-    if not user:
-        raise HTTPException(status_code=401, detail="User not found")
-
-    return {
-        "id": user.id,
-        "email": user.email,
-        "name": user.name,
-        "status": user.status,
-        "role": user.role
-    }
-
-
-# ---------------------------------------------------------
-# DEBUG: GENERA HASH NEL TUO AMBIENTE
-# ---------------------------------------------------------
-@router.get("/debug/hash")
-async def debug_hash():
-    """
-    Genera un hash bcrypt per la password '123'
-    direttamente nel tuo ambiente.
-    """
-    hashed = get_password_hash("123")
-    return {"password": "123", "hash": hashed}
+    access_token = create_access_token(data={"sub": user.email})
+    return {"access_token": access_token, "token_type": "bearer"}

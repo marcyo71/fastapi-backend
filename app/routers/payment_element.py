@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 import stripe
-from app.config.settings import settings
+from app.core.config import settings
 
 router = APIRouter(prefix="/api/payment", tags=["payment"])
 

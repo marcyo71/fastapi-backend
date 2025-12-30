@@ -1,6 +1,13 @@
-from app.db.base_class import Base
-from app.models.user import User
-from app.models.referral import Referral
-from app.models.transaction_model import Transaction
-from app.models.user_status import UserStatus
-from app.models.survey_model import Survey
+from sqlalchemy.orm import declarative_base
+
+Base = declarative_base()
+
+# ✅ importa qui tutti i tuoi modelli, così Alembic li vede
+import app.models.user
+import app.models.item
+import app.models.order
+import app.models.payment
+import app.models.product
+import app.models.category
+import app.models.address
+import app.models.session

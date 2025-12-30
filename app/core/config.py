@@ -1,83 +1,27 @@
-from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import field_validator
 import os
 
+class Settings:
+    # Ambiente (dev, prod, ecc.)
+    env: str = os.getenv("ENV", "dev")
+    debug: bool = os.getenv("DEBUG", "False").lower() == "true"
 
-class Settings(BaseSettings):
-    # -------------------------
-    # ENVIRONMENT
-    # -------------------------
-    env: str = "dev"  # dev | prod | test
-
-    # -------------------------
-    # DATABASE
-    # -------------------------
-    database_url: str
-
-    # -------------------------
-    # STRIPE
-    # -------------------------
-    stripe_secret_key: str
-    stripe_webhook_secret: str
-    stripe_public_key: str
-
-    # -------------------------
-    # JWT / AUTH
-    # -------------------------
-    secret_key: str
-    algorithm: str
-    access_token_expire_minutes: int
-
-    # -------------------------
-    # APP SETTINGS
-    # -------------------------
-    debug: bool = False
-
-    # -------------------------
-    # CONFIG
-    # -------------------------
-    model_config = SettingsConfigDict(
-        env_file=".env",        # placeholder, verrà sovrascritto
-        extra="forbid",
-        case_sensitive=False
+    # ✅ DB URLs
+    # In locale usi l'URL pubblico di Railway (containers-us-west-...railway.app)
+    # In Railway usi l'URL interno (fastapi-db.railway.internal)
+    database_url: str = (
+        os.getenv("DB_URL_LOCAL")  # URL pubblico per test da WSL
+        or os.getenv("DB_URL")     # URL interno per deploy su Railway
     )
+    async_database_url: str = os.getenv("DB_URL_ASYNC")
 
-    # -------------------------
-    # VALIDAZIONI AUTOMATICHE
-    # -------------------------
-    @field_validator("debug", mode="before")
-    def convert_debug(cls, v):
-        if isinstance(v, bool):
-            return v
-        return str(v).lower() in {"1", "true", "yes", "on"}
+    # ✅ JWT
+    secret_key: str = os.getenv("SECRET_KEY")
+    algorithm: str = os.getenv("ALGORITHM", "HS256")
+    access_token_expire_minutes: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
 
-    @field_validator("access_token_expire_minutes", mode="before")
-    def convert_minutes(cls, v):
-        return int(v)
+    # ✅ Stripe
+    stripe_secret_key: str = os.getenv("STRIPE_SECRET_KEY")
+    stripe_public_key: str = os.getenv("STRIPE_PUBLIC_KEY")
+    stripe_webhook_secret: str = os.getenv("STRIPE_WEBHOOK_SECRET")
 
-
-# -------------------------
-# CARICAMENTO DINAMICO .env
-# -------------------------
-
-def load_settings():
-    env = os.getenv("ENV", "dev").lower()
-
-    env_file_map = {
-        "dev": ".env.dev",
-        "prod": ".env.prod",
-        "test": ".env.test",
-    }
-
-    env_file = env_file_map.get(env, ".env.dev")
-
-    return Settings(_env_file=env_file)
-
-
-settings = load_settings()
-
-# -------------------------
-# DEBUG PRINTS
-# -------------------------
-print("USING ENV FILE:", settings.model_config.get("env_file"))
-print("DATABASE_URL:", settings.database_url)
+settings = Settings()

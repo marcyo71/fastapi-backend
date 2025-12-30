@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from app.db.session import AsyncSessionLocal
 from app.repositories.payment_repository import PaymentRepository
 from app.schemas.payment_schema import PaymentCreate
-from app.config.settings import settings
+from app.core.config import settings
 
 # ============================================================
 #   CONFIGURAZIONE STRIPE

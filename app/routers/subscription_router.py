@@ -1,6 +1,6 @@
 import stripe
 from fastapi import APIRouter, Form, HTTPException
-from app.config.settings import settings
+from app.core.config import settings
 
 router = APIRouter(prefix="/subscriptions", tags=["subscriptions"])
 

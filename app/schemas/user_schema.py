@@ -1,35 +1,24 @@
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
 
-
-# -------------------------
-# Base
-# -------------------------
-class UserBase(BaseModel):
+# Input per registrazione
+class UserCreate(BaseModel):
     email: EmailStr
+    password: str
+    name: str
 
-
-# -------------------------
-# Create
-# -------------------------
-class UserCreate(UserBase):
+# Input per login
+class UserLogin(BaseModel):
+    email: EmailStr
     password: str
 
-
-# -------------------------
-# Update
-# -------------------------
-class UserUpdate(BaseModel):
-    email: EmailStr | None = None
-    password: str | None = None
-
-
-# -------------------------
-# Read
-# -------------------------
-class UserRead(UserBase):
+# Output sicuro (non include hashed_password)
+class UserRead(BaseModel):
     id: int
-    created_at: datetime
+    email: EmailStr
+    name: str
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
 
     class Config:
-        from_attributes = True
+        orm_mode = True

@@ -1,7 +1,7 @@
 FROM python:3.11-slim
 
 # Evita output bufferizzato
-ENV PYTHONUNBUFFERED=1
+ENV PYTHONPATH=/app
 
 # Installa dipendenze di sistema
 RUN apt-get update && apt-get install -y \
